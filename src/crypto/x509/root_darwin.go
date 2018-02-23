@@ -174,19 +174,19 @@ func verifyCertWithSystem(block *pem.Block, cert *Certificate) bool {
 		fmt.Fprintf(os.Stderr, "can't write temporary file for cert: %v", err)
 		return false
 	}
-	cmd := exec.Command("/usr/bin/security", "verify-cert", "-c", f.Name(), "-l", "-L")
+	cmd := exec.Command("/usr/bin/security", "verify-cert", "-p", "ssl","-c", f.Name(), "-l", "-L")
 	var stderr bytes.Buffer
 	if debugExecDarwinRoots {
 		cmd.Stderr = &stderr
 	}
 	if err := cmd.Run(); err != nil {
 		if debugExecDarwinRoots {
-			println(fmt.Sprintf("crypto/x509: verify-cert rejected %s: %q", cert.Subject.CommonName, bytes.TrimSpace(stderr.Bytes())))
+			println(fmt.Sprintf("crypto/x509: verify-cert rejected %s: %q", cert.Subject, bytes.TrimSpace(stderr.Bytes())))
 		}
 		return false
 	}
 	if debugExecDarwinRoots {
-		println(fmt.Sprintf("crypto/x509: verify-cert approved %s", cert.Subject.CommonName))
+		println(fmt.Sprintf("crypto/x509: verify-cert approved %s", cert.Subject))
 	}
 	return true
 }
